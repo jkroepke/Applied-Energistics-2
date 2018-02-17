@@ -19,10 +19,11 @@
 package appeng.me.cluster.implementations;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -89,9 +90,9 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU
 	private final int[] usedOps = new int[3];
 	private final Map<ICraftingPatternDetails, TaskProgress> tasks = new HashMap<>();
 	// INSTANCE sate
-	private final LinkedList<TileCraftingTile> tiles = new LinkedList<>();
-	private final LinkedList<TileCraftingTile> storage = new LinkedList<>();
-	private final LinkedList<TileCraftingMonitorTile> status = new LinkedList<>();
+	private final List<TileCraftingTile> tiles = new ArrayList<>();
+	private final List<TileCraftingTile> storage = new ArrayList<>();
+	private final List<TileCraftingMonitorTile> status = new ArrayList<>();
 	private final HashMap<IMEMonitorHandlerReceiver<IAEItemStack>, Object> listeners = new HashMap<>();
 	private ICraftingLink myLastLink;
 	private String myName = "";
@@ -206,7 +207,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU
 
 		te.setCoreBlock( false );
 		te.markDirty();
-		this.tiles.push( te );
+		this.tiles.add( 0, te );
 
 		if( te.isStorage() )
 		{
@@ -227,7 +228,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU
 	{
 		if( input instanceof IAEItemStack )
 		{
-			final IAEItemStack is = this.waitingFor.findPrecise( (IAEItemStack) input );
+			final IAEItemStack is = this.waitingFor.findPrecise( input );
 			if( is != null && is.getStackSize() > 0 )
 			{
 				return true;
@@ -243,7 +244,7 @@ public final class CraftingCPUCluster implements IAECluster, ICraftingCPU
 			return input;
 		}
 
-		final IAEItemStack what = (IAEItemStack) input.copy();
+		final IAEItemStack what = input.copy();
 		final IAEItemStack is = this.waitingFor.findPrecise( what );
 
 		if( type == Actionable.SIMULATE )// causes crafting to lock up?
